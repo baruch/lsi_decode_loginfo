@@ -10,35 +10,47 @@ def decode_lsi_loginfo_numbers(val):
     spec = val & 0xFFFF
     return (t, origin, code, spec)
 
-iop_code = ["Code", 0x00FFFFFF, {
-0x00010000: ("IOP_LOGINFO_CODE_INVALID_SAS_ADDRESS", None, ""),
-0x00020000: ("IOP_LOGINFO_CODE_UNUSED2", None, ""),
-0x00030000: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE", None, ""),
-0x00030100: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_RT", None, "Route Table Entry not found"),
-0x00030200: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_PN", None, "Invalid Page Number"),
-0x00030300: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_FORM", None, "Invalid FORM"),
-0x00030400: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_PT", None, "Invalid Page Type"),
-0x00030500: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_DNM", None, "Device Not Mapped"),
-0x00030600: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_PERSIST", None, "Persistent Page not found"),
-0x00030700: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_DEFAULT", None, "Default Page not found"),
-0x0003E000: ("IOP_LOGINFO_CODE_FWUPLOAD_NO_FLASH_AVAILABLE", None, "Tried to upload from flash, but there is none"),
-0x0003E001: ("IOP_LOGINFO_CODE_FWUPLOAD_UNKNOWN_IMAGE_TYPE", None, "ImageType field contents were invalid"),
-0x0003E002: ("IOP_LOGINFO_CODE_FWUPLOAD_WRONG_IMAGE_SIZE", None, "ImageSize field in TCSGE was bad/offset in MfgPg 4 was wrong"),
-0x0003E003: ("IOP_LOGINFO_CODE_FWUPLOAD_ENTIRE_FLASH_UPLOAD_FAILED", None, "Error occured while attempting to upload the entire flash"),
-0x0003E003: ("IOP_LOGINFO_CODE_FWUPLOAD_ENTIRE_FLASH_UPLOAD_FAILED", None, "Error occurred while attempting to upload the entire flash"),
-0x0003E004: ("IOP_LOGINFO_CODE_FWUPLOAD_REGION_UPLOAD_FAILED", None, "Error occured while attempting to upload single flash region"),
-0x0003E004: ("IOP_LOGINFO_CODE_FWUPLOAD_REGION_UPLOAD_FAILED", None, "Error occurred while attempting to upload single flash region"),
-0x0003E005: ("IOP_LOGINFO_CODE_FWUPLOAD_DMA_FAILURE", None, "Problem occured while DMAing FW to host memory"),
-0x0003E005: ("IOP_LOGINFO_CODE_FWUPLOAD_DMA_FAILURE", None, "Problem occurred while DMAing FW to host memory"),
-0x00040000: ("IOP_LOGINFO_CODE_DIAG_MSG_ERROR", None, "Error handling diag msg - or'd with diag status"), # TODO: find diag msg codes
-0x00050000: ("IOP_LOGINFO_CODE_TASK_TERMINATED", None, ""),
+iop_invalid_page = ["Sub Code", 0x0000FFFF, {
+0x00000000: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE", None, ""),
+0x00000100: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_RT", None, "Route Table Entry not found"),
+0x00000200: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_PN", None, "Invalid Page Number"),
+0x00000300: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_FORM", None, "Invalid FORM"),
+0x00000400: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_PT", None, "Invalid Page Type"),
+0x00000500: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_DNM", None, "Device Not Mapped"),
+0x00000600: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_PERSIST", None, "Persistent Page not found"),
+0x00000700: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE_DEFAULT", None, "Default Page not found"),
+0x0000E000: ("IOP_LOGINFO_CODE_FWUPLOAD_NO_FLASH_AVAILABLE", None, "Tried to upload from flash, but there is none"),
+0x0000E001: ("IOP_LOGINFO_CODE_FWUPLOAD_UNKNOWN_IMAGE_TYPE", None, "ImageType field contents were invalid"),
+0x0000E002: ("IOP_LOGINFO_CODE_FWUPLOAD_WRONG_IMAGE_SIZE", None, "ImageSize field in TCSGE was bad/offset in MfgPg 4 was wrong"),
+0x0000E003: ("IOP_LOGINFO_CODE_FWUPLOAD_ENTIRE_FLASH_UPLOAD_FAILED", None, "Error occured while attempting to upload the entire flash"),
+0x0000E003: ("IOP_LOGINFO_CODE_FWUPLOAD_ENTIRE_FLASH_UPLOAD_FAILED", None, "Error occurred while attempting to upload the entire flash"),
+0x0000E004: ("IOP_LOGINFO_CODE_FWUPLOAD_REGION_UPLOAD_FAILED", None, "Error occured while attempting to upload single flash region"),
+0x0000E004: ("IOP_LOGINFO_CODE_FWUPLOAD_REGION_UPLOAD_FAILED", None, "Error occurred while attempting to upload single flash region"),
+0x0000E005: ("IOP_LOGINFO_CODE_FWUPLOAD_DMA_FAILURE", None, "Problem occured while DMAing FW to host memory"),
+0x0000E005: ("IOP_LOGINFO_CODE_FWUPLOAD_DMA_FAILURE", None, "Problem occurred while DMAing FW to host memory"),
+}]
+
+iop_encl_mgmt = ["Sub Code", 0x0000FFFF, {
 0x00060001: ("IOP_LOGINFO_CODE_ENCL_MGMT_READ_ACTION_ERR0R", None, "Read Action not supported for SEP msg"),
 0x00060002: ("IOP_LOGINFO_CODE_ENCL_MGMT_INVALID_BUS_ID_ERR0R", None, "Invalid Bus/ID in SEP msg"),
+}]
+
+iop_target = ["Sub Code", 0x0000FFFF, {
 0x00070001: ("IOP_LOGINFO_CODE_TARGET_ASSIST_TERMINATED", None, ""),
 0x00070002: ("IOP_LOGINFO_CODE_TARGET_STATUS_SEND_TERMINATED", None, ""),
 0x00070003: ("IOP_LOGINFO_CODE_TARGET_MODE_ABORT_ALL_IO", None, ""),
 0x00070004: ("IOP_LOGINFO_CODE_TARGET_MODE_ABORT_EXACT_IO", None, ""),
 0x00070005: ("IOP_LOGINFO_CODE_TARGET_MODE_ABORT_EXACT_IO_REQ", None, ""),
+}]
+
+iop_code = ["Code", 0x00FFFFFF, {
+0x00010000: ("IOP_LOGINFO_CODE_INVALID_SAS_ADDRESS", None, ""),
+0x00020000: ("IOP_LOGINFO_CODE_UNUSED2", None, ""),
+0x00030000: ("IOP_LOGINFO_CODE_CONFIG_INVALID_PAGE", iop_invalid_page, ""),
+0x00040000: ("IOP_LOGINFO_CODE_DIAG_MSG_ERROR", None, "Error handling diag msg - or'd with diag status"), # TODO: find diag msg codes
+0x00050000: ("IOP_LOGINFO_CODE_TASK_TERMINATED", None, "Associated with Task Abort"),
+0x00060000: ("IOP_LOGINFO_CODE_ENCL_MGMT", iop_encl_mgmt, ""),
+0x00070000: ("IOP_LOGINFO_CODE_TARGET", iop_target, ""),
 0x00080000: ("IOP_LOGINFO_CODE_LOG_TIMESTAMP_EVENT", None, ""),
 }]
 
