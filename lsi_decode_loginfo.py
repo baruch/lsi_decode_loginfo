@@ -250,27 +250,31 @@ types = ["Type", 0xF0000000, {
          0x40000000: ('iSCSI', None, ""),
 }]
 
-def _decode_lsi_loginfo(d, val):
+def _decode_lsi_loginfo(d, val, unparsed):
     if d is None:
-        return
+        return unparsed
 
     name = d[0]
     mask = d[1]
     vals = d[2]
 
     masked_val = mask & val
+    unparsed = unparsed & ~mask
 
     info = vals.get(masked_val, None)
     name += ':'
     if info is not None:
         print '%-10s\t%08Xh\t%s %s' % (name, masked_val, info[0], info[2])
-        _decode_lsi_loginfo(info[1], val)
+        return _decode_lsi_loginfo(info[1], val, unparsed)
     else:
         print '%-10s\t%08Xh\tUnknown code' % (name, masked_val)
-
+        return unparsed
 
 def decode_lsi_loginfo(val):
-    _decode_lsi_loginfo(types, val)
+    print '%-10s\t%08Xh' % ('Value', val)
+    unparsed = _decode_lsi_loginfo(types, val, val)
+    if unparsed:
+        print '%-10s\t%08Xh' % ('Unparsed', unparsed)
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
