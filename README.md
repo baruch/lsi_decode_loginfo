@@ -14,6 +14,20 @@ LSI support to decode it for you, if you can then let me know about the code
 and the explanation for it I can add it to the tool for everyone else's
 benefit.
 
+Sample
+------
+
+For the command:
+
+    ./lsi_decode_loginfo.py 0x31170000
+
+You get the output:
+
+    Value     	31170000h
+    Type:     	30000000h	SAS
+    Origin:   	01000000h	PL
+    Code:     	00170000h	PL_LOGINFO_CODE_IO_DEVICE_MISSING_DELAY_RETRY I-T Nexus Loss
+
 Author
 ------
 
