@@ -242,10 +242,73 @@ type_sas = ["Origin", 0x0F000000, {
             0x02000000: ('IR', ir_code, ""),
 }]
 
+fc_initiator = ["Code", 0x00FFFFFF, {
+0x00000000: ('BASE', None, ''),
+0x00000001: ('ERROR_OUT_OF_ORDER_FRAME', None, 'received an out of order frame - unsupported'),
+0x00000002: ('ERROR_BAD_START_OF_FRAME', None, 'Bad Rx Frame, bad start of frame primative'),
+0x00000003: ('ERROR_BAD_END_OF_FRAME', None, 'Bad Rx Frame, bad end of frame primative'),
+0x00000004: ('ERROR_OVER_RUN', None, 'Bad Rx Frame, overrun'),
+0x00000005: ('ERROR_RX_OTHER', None, 'Other errors caught by IOC which require retries'),
+0x00000006: ('ERROR_SUBPROC_DEAD', None, 'Main processor could not initialize sub-processor'),
+0x00000007: ('ERROR_RX_OVERRUN', None, 'Scatter Gather overrun '),
+0x00000008: ('ERROR_RX_BAD_STATUS', None, 'Receiver detected context mismatch via invalid header'),
+0x00000009: ('ERROR_RX_UNEXPECTED_FRAME', None, 'CtxMgr detected unsupported frame type '),
+0x0000000A: ('ERROR_LINK_FAILURE', None, 'Link failure occurred '),
+0x0000000B: ('ERROR_TX_TIMEOUT', None, 'Transmitter timeout error'),
+}]
+
+fc_target = ["Code", 0x00FFFFFF, {
+0x00000000: ('BASE', None, ''),
+0x00000001: ('NO_PDISC', None, 'not sent because we are waiting for a PDISC from the initiator'),
+0x00000002: ('NO_LOGIN', None, 'not sent because we are not logged in to the remote node'),
+0x00000003: ('DOAR_KILLED_BY_LIP', None, 'Data Out, Auto Response, not sent due to a LIP'),
+0x00000004: ('DIAR_KILLED_BY_LIP', None, 'Data In, Auto Response, not sent due to a LIP'),
+0x00000005: ('DIAR_MISSING_DATA', None, 'Data In, Auto Response, missing data frames'),
+0x00000006: ('DONR_KILLED_BY_LIP', None, 'Data Out, No Response, not sent due to a LIP'),
+0x00000007: ('WRSP_KILLED_BY_LIP', None, 'Auto-response after a write not sent due to a LIP'),
+0x00000008: ('DINR_KILLED_BY_LIP', None, 'Data In, No Response, not completed due to a LIP'),
+0x00000009: ('DINR_MISSING_DATA', None, 'Data In, No Response, missing data frames'),
+0x0000000a: ('MRSP_KILLED_BY_LIP', None, 'Manual Response not sent due to a LIP'),
+0x0000000b: ('NO_CLASS_3', None, 'not sent because remote node does not support Class 3'),
+0x0000000c: ('LOGIN_NOT_VALID', None, 'not sent because login to remote node not validated'),
+0x0000000e: ('FROM_OUTBOUND', None, 'cleared from the outbound queue after a logout'),
+0x0000000f: ('WAITING_FOR_DATA_IN', None, 'cleared waiting for data after a logout'),
+}]
+
+fc_lan = ["Code", 0x00FFFFFF, {
+0x00000000: ('BASE', None, ''),
+0x00000001: ('TRANS_SGL_MISSING', None, 'Transaction Context Sgl Missing'),
+0x00000002: ('TRANS_WRONG_PLACE', None, 'Transaction Context found before an EOB'),
+0x00000003: ('TRANS_RES_BITS_SET', None, 'Transaction Context value has reserved bits set'),
+0x00000004: ('WRONG_SGL_FLAG', None, 'Invalid SGL Flags'),
+}]
+
+fc_link = ["Code", 0x00FFFFFF, {
+0x00000000: ('BASE', None, ''),
+0x00000001: ('LOOP_INIT_TIMEOUT', None, 'Loop initialization timed out'),
+0x00000002: ('ALREADY_INITIALIZED', None, 'Another system controller already initialized the loop'),
+0x00000003: ('NOT_ESTABLISHED', None, 'Not synchronized to signal or still negotiating (possible cable problem)'),
+0x00000004: ('CRC_ERROR', None, 'CRC check detected error on received frame'),
+}]
+
+# TODO: For FC 0x26000000 the 6 nibbles at the end give the invalid byte offset
+# TODO: For FC 0x27000000 the 6 nibbles give additional information concerning state change
+
+type_fc = ["Origin", 0x0F000000, {
+    0x00000000: ('FCP Initiator', fc_initiator, ''),
+    0x01000000: ('FCP Target', fc_target, ""),
+    0x02000000: ('LAN', fc_lan, ""),
+    0x03000000: ('MPI Message Layer', None, ""),
+    0x04000000: ('FC Link', None, ""),
+    0x05000000: ('Context Manager', None, ""),
+    0x06000000: ('Invalid Field Offset', None, ""),
+    0x07000000: ('State Change Info', None, ""),
+}]
+
 types = ["Type", 0xF0000000, {
          0x00000000: ('NONE', None, ""),
          0x10000000: ('SCSI', None, ""),
-         0x20000000: ('FC', None, ""),
+         0x20000000: ('FC', type_fc, ""),
          0x30000000: ('SAS', type_sas, ""),
          0x40000000: ('iSCSI', None, ""),
 }]
