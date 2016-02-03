@@ -330,6 +330,20 @@ def _decode_lsi_loginfo(d, val, unparsed):
         print '%-10s\t%08Xh\t%s %s' % (name, masked_val, info[0], info[2])
         return _decode_lsi_loginfo(info[1], val, unparsed)
     else:
+        submask = mask >> 8
+        while submask > 0:
+            highmask = mask & ~submask
+            lowmask = submask
+            lowval = lowmask & val
+            highval = highmask & val
+            if lowval != 0:
+                info = vals.get(highval, None)
+                if info is not None:
+                    print '%-10s\t%08Xh\t%s %s' % (name, highval, info[0], info[2])
+                    print '%-10s\t%08Xh\t%s %s' % ('unknown', lowval, 'unknown', '')
+                    return unparsed
+            submask >>= 8
+
         print '%-10s\t%08Xh\tUnknown code' % (name, masked_val)
         return unparsed
 
