@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import sys
 
 def decode_lsi_loginfo_numbers(val):
@@ -318,11 +319,11 @@ type_fc = ["Origin", 0x0F000000, {
 }]
 
 types = ["Type", 0xF0000000, {
-         0x00000000: ('NONE', None, ""),
-         0x10000000: ('SCSI', None, ""),
-         0x20000000: ('FC', type_fc, ""),
-         0x30000000: ('SAS', type_sas, ""),
-         0x40000000: ('iSCSI', None, ""),
+    0x00000000: ('NONE', None, ""),
+    0x10000000: ('SCSI', None, ""),
+    0x20000000: ('FC', type_fc, ""),
+    0x30000000: ('SAS', type_sas, ""),
+    0x40000000: ('iSCSI', None, ""),
 }]
 
 def _decode_lsi_loginfo(d, val, unparsed):
@@ -339,7 +340,7 @@ def _decode_lsi_loginfo(d, val, unparsed):
     info = vals.get(masked_val, None)
     name += ':'
     if info is not None:
-        print '%-10s\t%08Xh\t%s %s' % (name, masked_val, info[0], info[2])
+        print('%-10s\t%08Xh\t%s %s' % (name, masked_val, info[0], info[2]))
         return _decode_lsi_loginfo(info[1], val, unparsed)
     else:
         submask = mask >> 8
@@ -351,30 +352,33 @@ def _decode_lsi_loginfo(d, val, unparsed):
             if lowval != 0:
                 info = vals.get(highval, None)
                 if info is not None:
-                    print '%-10s\t%08Xh\t%s %s' % (name, highval, info[0], info[2])
-                    print '%-10s\t%08Xh\t%s %s' % ('unknown', lowval, 'unknown', '')
+                    print('%-10s\t%08Xh\t%s %s'
+                          % (name, highval, info[0], info[2]))
+                    print('%-10s\t%08Xh\t%s %s'
+                          % ('unknown', lowval, 'unknown', ''))
                     return unparsed
             submask >>= 8
 
-        print '%-10s\t%08Xh\tUnknown code' % (name, masked_val)
+        print('%-10s\t%08Xh\tUnknown code' % (name, masked_val))
         return unparsed
 
 def decode_lsi_loginfo(val):
-    print '%-10s\t%08Xh' % ('Value', val)
+    print('%-10s\t%08Xh' % ('Value', val))
     unparsed = _decode_lsi_loginfo(types, val, val)
     if unparsed:
-        print '%-10s\t%08Xh' % ('Unparsed', unparsed)
+        print('%-10s\t%08Xh' % ('Unparsed', unparsed))
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        print 'Must provide a loginfo number to decode, as in:'
-        print '%s 0x31120000' % sys.argv[0]
+        print('Must provide a loginfo number to decode, as in:')
+        print('%s 0x31120000' % sys.argv[0])
         sys.exit(1)
-    
+
     try:
         val = int(sys.argv[1], 0)
     except ValueError:
-        print 'Failure to parse the value "%s", it must be a number' % sys.argv[1]
+        print('Failure to parse the value "%s", it must be a number'
+              % sys.argv[1])
         sys.exit(1)
 
     decode_lsi_loginfo(val)
